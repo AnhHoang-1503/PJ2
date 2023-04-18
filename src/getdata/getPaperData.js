@@ -26,9 +26,9 @@ async function getData() {
                 return 1
             }
         })
+        // creat newpage for each page
         const pages = []
         for (let page = 1; page <= pageCount; page++) {
-            // creat newpage for each page
             pages.push(await browser.newPage())
         }
         //get all paper of this journal

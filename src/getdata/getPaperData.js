@@ -11,7 +11,7 @@ async function getData() {
     //get journals links
     const read = await fs.readFile('../resources/journalsLinks.json')
     const journalLinks = JSON.parse(read)
-    for (let index = 1; index <= 274; index += 1) {
+    for (let index = 2; index <= 2; index += 1) {
         const journalLink = journalLinks[index - 1].link + "contents"
         await firstPage.goto(journalLink)
         console.log('counting pages')

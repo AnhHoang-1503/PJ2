@@ -1,38 +1,35 @@
 import { readFile, writeFile } from 'fs/promises'
+import { JSDOM } from "jsdom";
+import { memoryUsage } from 'node:process';
 
-
-async function intit() {
-  let sum = 0
-  for (let i = 1; i <= 1; i++) {
-    const read = await readFile(`../resources/paperdata/journal${i}.json`)
-    const data = JSON.parse(read)
-    // console.log(data.length)
-    // if(data.length <= 1) console.log(i)
-    // sum += data.length
-    console.log(data[2403])
-    console.log(data[2404])
-    console.log(data[2402])
-
+async function test1() {
+  let array = []
+  let checked
+  for (let i = 1; i < 274; i++) {
+    checked = await isNull(i)
+    console.log(checked)
+    if(!checked) array.push(i)
   }
-  // console.log(sum)
+  console.log(array)
 }
 
-async function intit2() {
-  // for (let i = 1; i <= 274; i++) {
-    const read = await readFile(`../resources/papersData.json`)
-    const data = JSON.parse(read)
-    console.log(data.length)
-    // await writeFile(`../resources/paperdata/journal${i}.json`, JSON.stringify(output))
-    // }
-}
-
-async function findLinkById(id) {
-  const read = await readFile(`../resources/papersData.json`)
+async function isNull(index) {
+  const read = await readFile(`../resources/detail/journal${index}-references.json`)
   const data = JSON.parse(read)
-  const result = data.find((value, index) => {
-    return value.id == id
-  })
-  console.log(result)
+  // console.log(data.length)
+  return data.length > 0
 }
 
-intit()
+async function caculator() {
+  const read = await readFile('../resources/references.json')
+  const data = JSON.parse(read)
+  let sum = 0
+  data.forEach(element => {
+    let length = element.references.length
+    if(length >= 2) sum += 1
+  });
+  console.log(data.length)
+  console.log(sum)
+}
+
+caculator()

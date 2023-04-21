@@ -2,6 +2,12 @@ import { readFile, writeFile } from 'fs/promises'
 import { JSDOM } from "jsdom";
 import { memoryUsage } from 'node:process';
 
+async function read(path) {
+  const read = await readFile(path)
+  const data = JSON.parse(read)
+  return data
+}
+
 async function test1() {
   let array = []
   let checked
@@ -25,11 +31,17 @@ async function caculator() {
   const data = JSON.parse(read)
   let sum = 0
   data.forEach(element => {
-    let length = element.references.length
-    if(length >= 2) sum += 1
+    sum += element.references.length
   });
   console.log(data.length)
   console.log(sum)
+}
+
+async function check() {
+  const data = await read('../resources/paperIds.json')
+  data.forEach((e) => {
+    if(e <= 9999 || e >= 10000000) console.log(e)
+  })
 }
 
 caculator()

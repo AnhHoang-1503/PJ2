@@ -22,4 +22,9 @@ async function mergerPaperReferences() {
     }
     await writeFile(`../resources/references.json`, JSON.stringify(output))
 }
-mergerPaperReferences()
+
+async function start() {  
+    mergerPaperReferences()
+}
+
+start()

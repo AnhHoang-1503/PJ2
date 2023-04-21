@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer')
-const fs = require('fs/promises')
+import { launch } from 'puppeteer'
+import { writeFile } from 'fs/promises'
 
 async function getLinks() {
     // go to hindawi.com
-    const browser = await puppeteer.launch()
+    const browser = await launch()
     const page = await browser.newPage()
     await page.goto("https://www.hindawi.com/journals/")
 
@@ -23,7 +23,7 @@ async function getLinks() {
     })
 
     // write to file .json    
-    await fs.writeFile('../resources/journalsLinks.json', JSON.stringify(links))
+    await writeFile('../resources/journalsLinks.json', JSON.stringify(links))
     await browser.close()
 }
 

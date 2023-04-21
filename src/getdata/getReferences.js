@@ -18,27 +18,32 @@ async function getPaperList(index) {
 // get papers of journal index which have references in paper id list
 async function getReferences(idList, paperList, jindex) {    
     let result = await Promise.all(paperList.map((paper, index) => {
-        return limit(async () => {
-            // console.log(`reading paper ${index}`)
-            const res = await fetch(paper.link)
-            const html = await res.text()
-            const regex = /Article ID (\d{6,7})/g
-            let result = html.matchAll(regex)
-            let referenceIds = [...result].map((e) => {
-                if (idList.includes(Number(e[1]))) return Number(e[1])
-            })
-
-            //remove duplicate elements
-            referenceIds = [...new Set(referenceIds)]
-            //remove undefined elements
-            referenceIds = referenceIds.filter(e => e !== undefined)
-            if(referenceIds.length == 0) return
-            const output = {
-                id: paper.id,
-                references: referenceIds
+        return limit(async function get() {
+            try {
+                // console.log(`reading paper ${index}`)
+                const res = await fetch(paper.link)
+                const html = await res.text()
+                const regex = /Article ID (\d{5,7})/g
+                let result = html.matchAll(regex)
+                let referenceIds = [...result].map((e) => {
+                    if (idList.includes(Number(e[1]))) return Number(e[1])
+                })
+    
+                //remove duplicate elements
+                referenceIds = [...new Set(referenceIds)]
+                //remove undefined elements
+                referenceIds = referenceIds.filter(e => e !== undefined)
+                if(referenceIds.length == 0) return
+                const output = {
+                    id: paper.id,
+                    references: referenceIds
+                }
+                console.log(`Journal: ${jindex} Paper: ${index}`,output)
+                return output
+            } catch (error) {
+                console.log(error)
+                get()
             }
-            console.log(`Journal: ${jindex} Paper: ${index}`,output)
-            return output
         })
     }))    
 
@@ -52,7 +57,7 @@ async function getReferences(idList, paperList, jindex) {
 
 async function start() {
     const idList = await getPaperIds()
-    for(let index = 224; index <= 224; index ++) {
+    for(let index = 1; index <= 274; index ++) {
         const paperList = await getPaperList(index)
         await getReferences(idList, paperList, index)
     }

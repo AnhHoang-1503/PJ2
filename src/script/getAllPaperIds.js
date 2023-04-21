@@ -1,6 +1,7 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises"
 
 async function start() {
+    console.log('getting all paper ids')
     const read = await readFile('../resources/papersData.json')
     const data = JSON.parse(read)
     const Ids = data.map((value, index) => {
@@ -9,4 +10,5 @@ async function start() {
     await writeFile('../resources/paperIds.json', JSON.stringify(Ids))
 }
 
-start()
+export { start }
+export default {start}

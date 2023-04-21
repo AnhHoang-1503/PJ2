@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs/promises'
-import { JSDOM } from "jsdom";
-import { memoryUsage } from 'node:process';
+import { JSDOM } from "jsdom"
+import { memoryUsage } from 'node:process'
 
 async function read(path) {
   const read = await readFile(path)
@@ -44,4 +44,11 @@ async function check() {
   })
 }
 
-caculator()
+async function test() {
+  const res = await fetch('https://www.hindawi.com/journals/aaa/contents/')
+  const html = await res.text()
+  // await writeFile('../resources/test.txt', html)
+}
+
+
+export default {caculator, check, test}

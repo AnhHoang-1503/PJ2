@@ -1,6 +1,7 @@
-import { readFile, writeFile, appendFile } from "fs/promises";
-import plimit from "p-limit";
-import { memoryUsage } from 'node:process';
+import { readFile, writeFile, appendFile } from "fs/promises"
+import plimit from "p-limit"
+import { memoryUsage } from 'node:process'
+
 const limit = plimit(100)
 
 // get all paper id 
@@ -18,6 +19,7 @@ async function getPaperList(index) {
 // get papers of journal index which have references in paper id list
 async function getReferences(idList, paperList, jindex) {    
     let result = await Promise.all(paperList.map((paper, index) => {
+        //lmit promise
         return limit(async function get() {
             try {
                 // console.log(`reading paper ${index}`)
@@ -63,4 +65,5 @@ async function start() {
     }
 }
 
-start()
+export {start, getPaperIds, getPaperList, getReferences}
+export default {start, getPaperIds, getPaperList, getReferences}

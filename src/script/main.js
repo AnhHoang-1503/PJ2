@@ -1,42 +1,51 @@
+import { readFile, writeFile, appendFile } from "fs/promises";
 import test from "./test.js";
-import handle, { findById } from "./handle.js";
-import connect from "./DBHandle/connectToDb.js";
-import getPaperData from "./getData/getPaperData.js";
-import getReferences from "./getData/getReferences.js";
-import getAllPaperIds from "./getData/getAllPaperIds.js";
-import getJournalsLinks from "./getData/getJournalsLinks.js";
-import haveRef from "./DBHandle/getHaveRef.js";
-import writeToDB from "./DBHandle/writeToDb.js";
+import link_handler from "./detail_for_each_site/link_handler.js";
+import springer from "./detail_for_each_site/springer.js";
+import hindawi from "./detail_for_each_site/hindawi.js";
+import pLimit from "p-limit";
 
-async function start() {
-  const t0 = performance.now();
-  await getJournalsLinks.start();
-  const t1 = performance.now();
-  console.log("Time: ", t1 - t0);
+const limit = pLimit(5);
 
-  await getPaperData.start();
-  const t2 = performance.now();
-  console.log("Time: ", t2 - t1);
+let data_level_1 = [];
+let data_level_2 = [];
+let data_level_3 = [];
 
-  await handle.mergePaperData();
-  const t3 = performance.now();
-  console.log("Time: ", t3 - t2);
+async function getRef(link, level = 1, pre = "") {
+    if (level > 2) {
+        return;
+    }
+    const site = await link_handler(link);
+    let output = {};
+    output.link = link;
+    output.pre = pre;
+    switch (site) {
+        case "springer":
+            output.refs = await springer(link);
+            break;
+        case "hindawi":
+            output.refs = await hindawi(link);
+            break;
+        default:
+            output.refs = [];
+            break;
+    }
 
-  await getAllPaperIds.start();
-  const t4 = performance.now();
-  console.log("Time: ", t4 - t3);
-
-  await getReferences.start();
-  const t5 = performance.now();
-  console.log("Time: ", t5 - t4);
-
-  await handle.mergePaperReferences();
-  const t6 = performance.now();
-  console.log("Time: ", t6 - t5);
-
-  await haveRef.getIdList();
-  await haveRef.papersHavRef();
-  await haveRef.detailIdRef();
+    switch (level) {
+        case 1:
+            data_level_1.push(output);
+            break;
+        case 2:
+            data_level_2.push(output);
+            break;
+        case 3:
+            data_level_3.push(output);
+            break;
+    }
 }
 
-start();
+async function main() {
+    await getRef("https://www.hindawi.com/journals/aaa/2023/8255686/");
+}
+
+main();
